@@ -3,14 +3,16 @@ body {
   background-color: #f8f9fa;
   margin: 0;
   padding: 0;
+  height: 100%;
 }
 
 .App {
   text-align: center;
+  
 }
 
 .App-header {
-  background-color: #282c34;
+  background-color: #282c34a8;
   padding: 20px;
   color: white;
 }
@@ -32,7 +34,9 @@ h2 {
   flex: 1 1 50%;
   box-sizing: border-box;
 }
-
+.leftView{
+   background-color: #e6e6e6;
+}
 form {
   background: white;
   border: 1px solid #ddd;
