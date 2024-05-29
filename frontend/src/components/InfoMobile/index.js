@@ -36,7 +36,7 @@ function InfoMobile({ totalPrice }) {
         endIcon={<ExpandMoreRoundedIcon />}
         onClick={toggleDrawer(true)}
       >
-        View details
+        Detalhes
       </Button>
       <Drawer open={open} anchor="top" onClose={toggleDrawer(false)}>
         {DrawerList}

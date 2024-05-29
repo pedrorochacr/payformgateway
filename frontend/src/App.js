@@ -32,7 +32,7 @@ import ToggleColorMode from './components/ToggleColorMode';
 
 
 
-const steps = ['Payment details', 'Review your order'];
+const steps = ['Dados de Pagamento', 'Compra Finalizada'];
 
 function getStepContent(step) {
   switch (step) {
@@ -54,7 +54,15 @@ export default function App() {
         mode,
         primary: { main:"#4B2273" },
       
-      } 
+      },
+      typography: {
+        fontFamily: [
+          'Jost',
+
+        ].join(','),
+
+
+      },
     
     });
   const [activeStep, setActiveStep] = React.useState(0);
@@ -208,7 +216,7 @@ export default function App() {
             >
               <div>
                 <Typography variant="subtitle2" gutterBottom>
-                  Selected products
+                  Total
                 </Typography>
                 <Typography variant="body1">
                   {activeStep >= 2 ? '$144.97' : '$134.98'}
@@ -280,39 +288,16 @@ export default function App() {
                     justifyContent: activeStep !== 0 ? 'space-between' : 'flex-end',
                     alignItems: 'end',
                     flexGrow: 1,
+                    height:'20px',
                     gap: 1,
-                    pb: { xs: 12, sm: 0 },
+                    pb: { xs: 0, sm: 0 },
                     mt: { xs: 2, sm: 0 },
-                    mb: '60px',
+                    mb: '40px',
                   }}
                 >
-                  {activeStep !== 0 && (
-                    <Button
-                      startIcon={<ChevronLeftRoundedIcon />}
-                      onClick={handleBack}
-                      variant="text"
-                      sx={{
-                        display: { xs: 'none', sm: 'flex' },
-                      }}
-                    >
-                      Previous
-                    </Button>
-                  )}
 
-                  {activeStep !== 0 && (
-                    <Button
-                      startIcon={<ChevronLeftRoundedIcon />}
-                      onClick={handleBack}
-                      variant="outlined"
-                      fullWidth
-                      sx={{
-                        display: { xs: 'flex', sm: 'none' },
-                      }}
-                    >
-                      Previous
-                    </Button>
-                  )}
-
+               
+                  {activeStep !== steps.length -1 && (
                   <Button
                     variant="contained"
                     endIcon={<ChevronRightRoundedIcon />}
@@ -321,8 +306,8 @@ export default function App() {
                       width: { xs: '100%', sm: 'fit-content' },
                     }}
                   >
-                    {activeStep === steps.length - 1 ? 'Place order' : 'Next'}
-                  </Button>
+                    Finalizar Compra
+                  </Button>)}
                 </Box>
               </React.Fragment>
             )}

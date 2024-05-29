@@ -44,16 +44,7 @@ export default function Review() {
       >
         <div>
           <Typography variant="subtitle2" gutterBottom>
-            Shipment details
-          </Typography>
-          <Typography gutterBottom>John Smith</Typography>
-          <Typography color="text.secondary" gutterBottom>
-            {addresses.join(', ')}
-          </Typography>
-        </div>
-        <div>
-          <Typography variant="subtitle2" gutterBottom>
-            Payment details
+            Dados de Pagamento
           </Typography>
           <Grid container>
             {payments.map((payment) => (

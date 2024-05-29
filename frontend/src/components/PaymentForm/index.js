@@ -18,14 +18,14 @@ import PixIcon from '@mui/icons-material/Pix';
 import AccountBalanceRoundedIcon from '@mui/icons-material/AccountBalanceRounded';
 import CreditCardRoundedIcon from '@mui/icons-material/CreditCardRounded';
 import SimCardRoundedIcon from '@mui/icons-material/SimCardRounded';
-import WarningRoundedIcon from '@mui/icons-material/WarningRounded';
+import PixArea from '../PixArea';
+import BilletArea from '../BilletArea';
 
 
 
 const Card = styled(MuiCard)(({ theme, selected }) => ({
   border: '1px solid',
   borderColor: theme.palette.divider,
-  width: '15%',
   '&:hover': {
     background:
       theme.palette.mode === 'light'
@@ -41,6 +41,12 @@ const Card = styled(MuiCard)(({ theme, selected }) => ({
     flexGrow: 1,
     maxWidth: `calc(50% - ${theme.spacing(1)})`,
   },
+  [theme.breakpoints.up('xs')]: {
+    width: '100%',
+  },
+  [theme.breakpoints.up('sm')]: {
+    width: '30%',
+  },
   ...(selected && {
     backgroundColor: theme.palette.action.selected,
     borderColor:
@@ -53,9 +59,9 @@ const Card = styled(MuiCard)(({ theme, selected }) => ({
 const PaymentContainer = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
-  justifyContent: 'space-between',
+  gap:'35px',
   width: '100%',
-  height: 375,
+  height: 340,
   padding: theme.spacing(3),
   borderRadius: '20px',
   border: '1px solid ',
@@ -67,9 +73,6 @@ const PaymentContainer = styled('div')(({ theme }) => ({
   boxShadow: '0px 4px 8px hsla(210, 0%, 0%, 0.05)',
   [theme.breakpoints.up('xs')]: {
     height: 300,
-  },
-  [theme.breakpoints.up('sm')]: {
-    height: 350,
   },
 }));
 
@@ -121,6 +124,7 @@ export default function PaymentForm() {
           sx={{
             display: 'flex',
             flexDirection: { xs: 'column', sm: 'row' },
+            alignItems: {xs: 'center'},
             gap: 2,
           }}
         >
@@ -176,7 +180,7 @@ export default function PaymentForm() {
               </CardContent>
             </CardActionArea>
           </Card>
-          <Card selected={paymentType === 'boletoTransfer'}>
+          {/* <Card selected={paymentType === 'boletoTransfer'}>
             <CardActionArea
               onClick={() => setPaymentType('boletoTransfer')}
               sx={{
@@ -201,7 +205,7 @@ export default function PaymentForm() {
                 <Typography fontWeight="medium">Boleto</Typography>
               </CardContent>
             </CardActionArea>
-          </Card>
+          </Card> */}
         </RadioGroup>
       </FormControl>
       {paymentType === 'creditCard' && (
@@ -214,16 +218,9 @@ export default function PaymentForm() {
         >
           <PaymentContainer>
             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-              <Typography variant="subtitle2">Credit card</Typography>
+              <Typography variant="subtitle2">Cartão de Crédito</Typography>
               <CreditCardRoundedIcon sx={{ color: 'text.secondary' }} />
             </Box>
-            <SimCardRoundedIcon
-              sx={{
-                fontSize: { xs: 48, sm: 56 },
-                transform: 'rotate(90deg)',
-                color: 'text.secondary',
-              }}
-            />
             <Box
               sx={{
                 display: 'flex',
@@ -234,7 +231,7 @@ export default function PaymentForm() {
             >
               <FormGrid sx={{ flexGrow: 1 }}>
                 <FormLabel htmlFor="card-number" required>
-                  Card number
+                  Número do Cartão
                 </FormLabel>
                 <OutlinedInput
                   id="card-number"
@@ -262,18 +259,17 @@ export default function PaymentForm() {
             <Box sx={{ display: 'flex', gap: 2 }}>
               <FormGrid sx={{ flexGrow: 1 }}>
                 <FormLabel htmlFor="card-name" required>
-                  Name
+                  Nome
                 </FormLabel>
                 <OutlinedInput
                   id="card-name"
                   autoComplete="card-name"
-                  placeholder="John Smith"
                   required
                 />
               </FormGrid>
               <FormGrid sx={{ flexGrow: 1 }}>
                 <FormLabel htmlFor="card-expiration" required>
-                  Expiration date
+                  Data de Expiração
                 </FormLabel>
                 <OutlinedInput
                   id="card-expiration"
@@ -288,54 +284,16 @@ export default function PaymentForm() {
           </PaymentContainer>
           <FormControlLabel
             control={<Checkbox name="saveCard" />}
-            label="Remember credit card details for next time"
+            label="Lembrar dados do cartão para próximas compras"
           />
         </Box>
       )}
-
       {paymentType === 'bankTransfer' && (
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 2,
-          }}
-        >
-          <Alert severity="warning" icon={<WarningRoundedIcon />}>
-            Your order will be processed once we receive the funds.
-          </Alert>
-          <Typography variant="subtitle1" fontWeight="medium">
-            Bank account
-          </Typography>
-          <Typography variant="body1" gutterBottom>
-            Please transfer the payment to the bank account details shown below.
-          </Typography>
-          <Box sx={{ display: 'flex', gap: 1 }}>
-            <Typography variant="body1" color="text.secondary">
-              Bank:
-            </Typography>
-            <Typography variant="body1" fontWeight="medium">
-              Mastercredit
-            </Typography>
-          </Box>
-          <Box sx={{ display: 'flex', gap: 1 }}>
-            <Typography variant="body1" color="text.secondary">
-              Account number:
-            </Typography>
-            <Typography variant="body1" fontWeight="medium">
-              123456789
-            </Typography>
-          </Box>
-          <Box sx={{ display: 'flex', gap: 1 }}>
-            <Typography variant="body1" color="text.secondary">
-              Routing number:
-            </Typography>
-            <Typography variant="body1" fontWeight="medium">
-              987654321
-            </Typography>
-          </Box>
-        </Box>
+         <PixArea ></PixArea>
       )}
+      {/* {paymentType === 'boletoTransfer' && (
+         <BilletArea />
+      )} */}
     </Stack>
   );
 }
