@@ -29,7 +29,7 @@ import Info from './components/Info';
 import InfoMobile from './components/InfoMobile';
 import PaymentForm from './components/PaymentForm';
 import Review from './components/Review';
-import ToggleColorMode from './components/ToggleColorMode';
+import FinishedBuy from './components/FinishedBuy';
 
 
 
@@ -40,7 +40,7 @@ function getStepContent(step) {
     case 0:
       return <PaymentForm />;
     case 1:
-      return <Review />;
+      return <FinishedBuy />;
     default:
       throw new Error('Unknown step');
   }
@@ -260,26 +260,7 @@ export default function App() {
                 </Step>
               ))}
             </Stepper>
-            {activeStep === steps.length ? (
-              <Stack spacing={2} useFlexGap>
-                <Typography variant="h1">📦</Typography>
-                <Typography variant="h5">Thank you for your order!</Typography>
-                <Typography variant="body1" color="text.secondary">
-                  Your order number is
-                  <strong>&nbsp;#140396</strong>. We have emailed your order
-                  confirmation and will update you once its shipped.
-                </Typography>
-                <Button
-                  variant="contained"
-                  sx={{
-                    alignSelf: 'start',
-                    width: { xs: '100%', sm: 'auto' },
-                  }}
-                >
-                  Go to my orders
-                </Button>
-              </Stack>
-            ) : (
+           
               <React.Fragment>
                 {getStepContent(activeStep)}
                 <Box
@@ -311,7 +292,6 @@ export default function App() {
                   </Button>)}
                 </Box>
               </React.Fragment>
-            )}
           </Box>
         </Grid>
       </Grid>
