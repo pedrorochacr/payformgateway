@@ -1,4 +1,4 @@
-import { Alert, Box, Typography } from "@mui/material";
+import {  Box, Typography } from "@mui/material";
 import React from 'react';
 
 import QRCode from 'qrcode.react';
