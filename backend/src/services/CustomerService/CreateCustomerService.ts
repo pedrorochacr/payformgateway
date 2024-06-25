@@ -14,7 +14,7 @@ interface CustomerData {
     cpf : string
 }
 
-const CreateOrShowCustomerService = async (
+const CreatePayRequest = async (
   customerData: CustomerData,
   value: number
 ): Promise<Transaction> => {
@@ -29,9 +29,9 @@ const CreateOrShowCustomerService = async (
     customer = await Customer.create(customerData)
   }
 
-  const transaction = await CreateTransaction(customer.id, value);
+  const transaction = await CreateTransaction(customer.id, value*100);
 
   return transaction;
 };
 
-export default CreateOrShowCustomerService;
+export default CreatePayRequest;
