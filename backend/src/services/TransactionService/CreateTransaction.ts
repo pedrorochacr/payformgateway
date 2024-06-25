@@ -11,6 +11,7 @@ const CreateTransaction = async (
      amount: value ,
      id: uuidv4()
   });
+  console.log("newTransaction",newTransaction )
 
   return newTransaction;
 };
