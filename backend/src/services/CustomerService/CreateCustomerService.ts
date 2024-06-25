@@ -1,5 +1,7 @@
 import Customer from "../../models/Customer";
+import Transaction from "../../models/Transaction";
 import CreateBuyerService from "../ZoopService/CreateBuyerService";
+import CreateTransaction from '../TransactionService/CreateTransaction';
 
 interface CustomerData {
     marketplaceId  : string
@@ -13,8 +15,9 @@ interface CustomerData {
 }
 
 const CreateOrShowCustomerService = async (
-  customerData: CustomerData
-): Promise<Customer> => {
+  customerData: CustomerData,
+  value: number
+): Promise<Transaction> => {
   let customer = await Customer.findOne({
      where: {cpf:customerData.cpf}
   })
@@ -26,8 +29,9 @@ const CreateOrShowCustomerService = async (
     customer = await Customer.create(customerData)
   }
 
+  const transaction = await CreateTransaction(customer.id, value);
 
-  return customer;
+  return transaction;
 };
 
 export default CreateOrShowCustomerService;

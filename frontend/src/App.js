@@ -30,8 +30,10 @@ import InfoMobile from './components/InfoMobile';
 import PaymentForm from './components/PaymentForm';
 import Review from './components/Review';
 import FinishedBuy from './components/FinishedBuy';
-
-
+import useApi from './services/api';
+import QrCode from './components/PixArea/QrCode';
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 const steps = ['Dados de Pagamento', 'Compra Finalizada'];
 
@@ -48,13 +50,25 @@ function getStepContent(step) {
 
 export default function App() {
   const [mode, setMode] = React.useState('light');
+  const api = useApi();
+  const { createPixTransaction } = useApi();
+  const [pix, setPix] = React.useState(null);
+  const location = useLocation();
+
+  const getIdFromUrl = () => {
+    const searchParams = new URLSearchParams(location.search);
+    return searchParams.get('id');
+  };
+
+  const id = React.useState(getIdFromUrl());
 
   const defaultTheme = createTheme(
-    { palette: 
-      { 
+    {
+      palette:
+      {
         mode,
-        primary: { main:"#4B2273" },
-      
+        primary: { main: "#4B2273" },
+
       },
       typography: {
         fontFamily: [
@@ -64,17 +78,39 @@ export default function App() {
 
 
       },
-    
+
     });
   const [activeStep, setActiveStep] = React.useState(0);
+  const [value, setValue] = React.useState(null);
+  const [amount, setAmount] = React.useState(null);
+  const [costumerName, setCostumerName] = React.useState('');
+  
 
   const toggleColorMode = () => {
     setMode((prev) => (prev === 'dark' ? 'light' : 'dark'));
   };
 
- 
-  const handleNext = () => {
-    setActiveStep(activeStep + 1);
+  useEffect(() => {
+    const handleData = async () => {
+      try {
+        const response = await api.findData(id[0]);
+        setAmount(response.amount);
+        const convertToReais = (valueInCents) => {
+          return (valueInCents / 100).toFixed(2).replace('.', ',');
+        };
+        const formattedValue = `R$ ${convertToReais(response.amount)}`;
+        setValue(formattedValue);
+        setCostumerName(response.name);
+      } catch (error) {
+        console.error('Erro ao buscar os produtos:', error);
+      }
+    }
+    handleData();
+  },[id]);
+
+  const handleNext = async () => {
+    const pixTransaction = await createPixTransaction(amount);
+    setPix(pixTransaction);
   };
 
   const handleBack = () => {
@@ -82,220 +118,233 @@ export default function App() {
   };
 
   return (
-    <ThemeProvider theme={defaultTheme}>
-      <CssBaseline />
-      <Grid container sx={{ height: { xs: '100%', sm: '100dvh' } }}>
-        <Grid
-          item
-          xs={12}
-          sm={5}
-          lg={4}
-          sx={{
-            display: { xs: 'none', md: 'flex' },
-            flexDirection: 'column',
-            backgroundColor: 'background.paper',
-            borderRight: { sm: 'none', md: '1px solid' },
-            borderColor: { sm: 'none', md: 'divider' },
-            alignItems: 'start',
-            pt: 4,
-            px: 10,
-            gap: 4,
-          }}
-        >
-          <Box
+    id ?
+      <ThemeProvider theme={defaultTheme}>
+        <CssBaseline />
+        <Grid container sx={{ height: { xs: '100%', sm: '100dvh' } }}>
+          <Grid
+            item
+            xs={12}
+            sm={5}
+            lg={4}
             sx={{
-              display: 'flex',
-              alignItems: 'end',
-              height: 50,
-            }}
-          >
-            <img src={payformLogo} style={{width:'35%'}}></img>
-          </Box>
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              height: 50,
-            }}
-          >
-              <p>Olá <span style={{ fontWeight:'600'}}>Maria,</span> você está a um passo de concluir sua compra </p>
-          </Box>
-          <Box
-            sx={{
-              display: 'flex',
+              display: { xs: 'none', md: 'flex' },
               flexDirection: 'column',
-              flexGrow: 1,
-              width: '100%',
-              maxWidth: 500,
-            }}
-          >
-            <Info totalPrice={activeStep >= 2 ? 'R$144.97' : 'R$134.98'} />
-          </Box>
-        </Grid>
-        <Grid
-          item
-          sm={12}
-          md={7}
-          lg={8}
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            maxWidth: '100%',
-            width: '100%',
-            backgroundColor: { xs: 'transparent', sm: 'background.default' },
-            alignItems: 'start',
-            pt: { xs: 2, sm: 4 },
-            px: { xs: 2, sm: 10 },
-            gap: { xs: 4, md: 8 },
-          }}
-        >
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: { sm: 'space-between', md: 'flex-end' },
-              alignItems: 'center',
-              width: '100%',
-              maxWidth: { sm: '100%', md: 600 },
+              backgroundColor: 'background.paper',
+              borderRight: { sm: 'none', md: '1px solid' },
+              borderColor: { sm: 'none', md: 'divider' },
+              alignItems: 'start',
+              pt: 4,
+              px: 10,
+              gap: 4,
             }}
           >
             <Box
               sx={{
-                display: { xs: 'flex', md: 'none' },
-                flexDirection: 'row',
-                width: '100%',
-                justifyContent: 'space-between',
+                display: 'flex',
+                alignItems: 'end',
+                height: 50,
               }}
             >
-              <img src={payformLogo} style={{width:'35%'}}></img>
+              <img src={payformLogo} style={{ width: '35%' }}></img>
             </Box>
             <Box
               sx={{
-                display: { xs: 'none', md: 'flex' },
+                display: 'flex',
+                alignItems: 'center',
+                height: 50,
+              }}
+            >
+              <p>Olá <span style={{ fontWeight: '600' }}>{costumerName}</span> você está a um passo de concluir sua compra </p>
+            </Box>
+            <Box
+              sx={{
+                display: 'flex',
                 flexDirection: 'column',
-                justifyContent: 'space-between',
-                alignItems: 'flex-end',
                 flexGrow: 1,
-                height: 40,
+                width: '100%',
+                maxWidth: 500,
+              }}
+            >
+              <Info totalPrice={value} />
+            </Box>
+          </Grid>
+          <Grid
+            item
+            sm={12}
+            md={7}
+            lg={8}
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              maxWidth: '100%',
+              width: '100%',
+              backgroundColor: { xs: 'transparent', sm: 'background.default' },
+              alignItems: 'start',
+              pt: { xs: 2, sm: 4 },
+              px: { xs: 2, sm: 10 },
+              gap: { xs: 4, md: 8 },
+            }}
+          >
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: { sm: 'space-between', md: 'flex-end' },
+                alignItems: 'center',
+                width: '100%',
+                maxWidth: { sm: '100%', md: 600 },
+              }}
+            >
+              <Box
+                sx={{
+                  display: { xs: 'flex', md: 'none' },
+                  flexDirection: 'row',
+                  width: '100%',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <img src={payformLogo} style={{ width: '35%' }}></img>
+              </Box>
+              <Box
+                sx={{
+                  display: { xs: 'none', md: 'flex' },
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  alignItems: 'flex-end',
+                  flexGrow: 1,
+                  height: 40,
+                }}
+              >
+                <Stepper
+                  id="desktop-stepper"
+                  activeStep={activeStep}
+                  sx={{
+                    width: '100%',
+                    height: 50,
+                  }}
+                >
+                  {steps.map((label) => (
+                    <Step
+                      sx={{
+                        ':first-child': { pl: 0 },
+                        ':last-child': { pr: 0 },
+                      }}
+                      key={label}
+                    >
+                      <StepLabel>{label}</StepLabel>
+                    </Step>
+                  ))}
+                </Stepper>
+              </Box>
+            </Box>
+            <Card
+              sx={{
+                display: { xs: 'flex', md: 'none' },
+                width: '100%',
+              }}
+            >
+              <CardContent
+                sx={{
+                  display: 'flex',
+                  width: '100%',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  ':last-child': { pb: 2 },
+                }}
+              >
+                <div>
+                  <Typography variant="subtitle2" gutterBottom>
+                    Total
+                  </Typography>
+                  <Typography variant="body1">
+                    {value}
+                  </Typography>
+                </div>
+                <InfoMobile totalPrice={value} />
+              </CardContent>
+            </Card>
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                flexGrow: 1,
+                width: '100%',
+                maxWidth: { sm: '100%', md: 600 },
+                maxHeight: '720px',
+                gap: { xs: 5, md: 'none' },
               }}
             >
               <Stepper
-                id="desktop-stepper"
+                id="mobile-stepper"
                 activeStep={activeStep}
-                sx={{
-                  width: '100%',
-                  height: 50,
-                }}
+                alternativeLabel
+                sx={{ display: { sm: 'flex', md: 'none' } }}
               >
                 {steps.map((label) => (
                   <Step
                     sx={{
                       ':first-child': { pl: 0 },
                       ':last-child': { pr: 0 },
+                      '& .MuiStepConnector-root': { top: { xs: 6, sm: 12 } },
                     }}
                     key={label}
                   >
-                    <StepLabel>{label}</StepLabel>
+                    <StepLabel
+                      sx={{ '.MuiStepLabel-labelContainer': { maxWidth: '70px' } }}
+                    >
+                      {label}
+                    </StepLabel>
                   </Step>
                 ))}
               </Stepper>
-            </Box>
-          </Box>
-          <Card
-            sx={{
-              display: { xs: 'flex', md: 'none' },
-              width: '100%',
-            }}
-          >
-            <CardContent
-              sx={{
-                display: 'flex',
-                width: '100%',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                ':last-child': { pb: 2 },
-              }}
-            >
-              <div>
-                <Typography variant="subtitle2" gutterBottom>
-                  Total
-                </Typography>
-                <Typography variant="body1">
-                  {activeStep >= 2 ? '$144.97' : '$134.98'}
-                </Typography>
-              </div>
-              <InfoMobile totalPrice={activeStep >= 2 ? '$144.97' : '$134.98'} />
-            </CardContent>
-          </Card>
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              flexGrow: 1,
-              width: '100%',
-              maxWidth: { sm: '100%', md: 600 },
-              maxHeight: '720px',
-              gap: { xs: 5, md: 'none' },
-            }}
-          >
-            <Stepper
-              id="mobile-stepper"
-              activeStep={activeStep}
-              alternativeLabel
-              sx={{ display: { sm: 'flex', md: 'none' } }}
-            >
-              {steps.map((label) => (
-                <Step
-                  sx={{
-                    ':first-child': { pl: 0 },
-                    ':last-child': { pr: 0 },
-                    '& .MuiStepConnector-root': { top: { xs: 6, sm: 12 } },
-                  }}
-                  key={label}
-                >
-                  <StepLabel
-                    sx={{ '.MuiStepLabel-labelContainer': { maxWidth: '70px' } }}
-                  >
-                    {label}
-                  </StepLabel>
-                </Step>
-              ))}
-            </Stepper>
-           
-              <React.Fragment>
-                {getStepContent(activeStep)}
-                <Box
-                  sx={{
-                    display: 'flex',
-                    flexDirection: { xs: 'column-reverse', sm: 'row' },
-                    justifyContent: activeStep !== 0 ? 'space-between' : 'flex-end',
-                    alignItems: 'end',
-                    flexGrow: 1,
-                    height:'20px',
-                    gap: 1,
-                    pb: { xs: 0, sm: 0 },
-                    mt: { xs: 2, sm: 0 },
-                    mb: '40px',
-                  }}
-                >
+              { pix ? (
+                <QrCode codePix={pix} value={value} />
+              )
+                :
+                (
+                  <React.Fragment>
+                    {getStepContent(activeStep)}
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        flexDirection: { xs: 'column-reverse', sm: 'row' },
+                        justifyContent: activeStep !== 0 ? 'space-between' : 'flex-end',
+                        alignItems: 'end',
+                        flexGrow: 1,
+                        height: '20px',
+                        gap: 1,
+                        pb: { xs: 0, sm: 0 },
+                        mt: { xs: 2, sm: 0 },
+                        mb: '40px',
+                      }}
+                    >
 
-               
-                  {activeStep !== steps.length -1 && (
-                  <Button
-                    variant="contained"
-                    endIcon={<ChevronRightRoundedIcon />}
-                    onClick={handleNext}
-                    sx={{
-                      width: { xs: '100%', sm: 'fit-content' },
-                    }}
-                  >
-                    Finalizar Compra
-                  </Button>)}
-                </Box>
-              </React.Fragment>
-          </Box>
+
+                      {activeStep !== steps.length - 1 && (
+                        <Button
+                          variant="contained"
+                          endIcon={<ChevronRightRoundedIcon />}
+                          onClick={handleNext}
+                          sx={{
+                            width: { xs: '100%', sm: 'fit-content' },
+                          }}
+                        >
+                          Finalizar Compra
+                        </Button>
+                      )}
+                    </Box>
+                  </React.Fragment>
+
+
+                )
+              }
+
+            </Box>
+          </Grid>
         </Grid>
-      </Grid>
-     
-    </ThemeProvider>
+
+      </ThemeProvider>
+      :
+      null
   );
 }

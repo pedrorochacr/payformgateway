@@ -12,13 +12,8 @@ import {
   @Table
   class Transaction extends Model<Transaction> {
     @PrimaryKey
-    @AutoIncrement
     @Column
-    id: number;
-  
-    @Default(null)
-    @Column
-    payment_type: string;
+    id: String;
   
     @Column
     customerId: number;

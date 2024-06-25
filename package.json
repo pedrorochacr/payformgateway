@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "@api/zoop": "file:.api/apis/zoop",
+    "axios": "^1.7.2",
+    "number-formatter": "^1.2.0"
+  }
+}
