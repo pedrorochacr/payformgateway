@@ -7,84 +7,64 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
-import Stack from '@mui/material/Stack';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import Stepper from '@mui/material/Stepper';
-import ToggleButton from '@mui/material/ToggleButton';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
-
+import WaitingPayment from './components/WaitingPayment';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-
-
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
-import AutoAwesomeRoundedIcon from '@mui/icons-material/AutoAwesomeRounded';
-import ChevronLeftRoundedIcon from '@mui/icons-material/ChevronLeftRounded';
 import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
-import payformLogo from './assets/payformLogo.png'
-import AddressForm from './components/AddressForm';
-import CheckoutTheme from './components/CheckoutTheme';
+import payformLogo from './assets/payformLogo.png';
 import Info from './components/Info';
 import InfoMobile from './components/InfoMobile';
 import PaymentForm from './components/PaymentForm';
-import Review from './components/Review';
 import FinishedBuy from './components/FinishedBuy';
 import useApi from './services/api';
 import QrCode from './components/PixArea/QrCode';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 const steps = ['Dados de Pagamento', 'Compra Finalizada'];
 
-function getStepContent(step) {
-  switch (step) {
-    case 0:
-      return <PaymentForm />;
-    case 1:
-      return <FinishedBuy />;
-    default:
-      throw new Error('Unknown step');
-  }
-}
-
 export default function App() {
-  const [mode, setMode] = React.useState('light');
+  const [paymentType, setPaymentType] = useState('creditCard');
+  const [cardNumber, setCardNumber] = useState('');
+  const [cvv, setCvv] = useState('');
+  const [expirationDate, setExpirationDate] = useState('');
+  const [cardName, setCardName] = useState('');
+  const [mode, setMode] = useState('light');
   const api = useApi();
   const { createPixTransaction } = useApi();
-  const [pix, setPix] = React.useState(null);
+  const { createCreditTransaction } = useApi();
+  const { createBoletoTransaction } = useApi();
+  const [pix, setPix] = useState(null);
   const location = useLocation();
-
+  const [waitingPayment, setWaitingPayment] = useState(false);
   const getIdFromUrl = () => {
     const searchParams = new URLSearchParams(location.search);
     return searchParams.get('id');
   };
 
-  const id = React.useState(getIdFromUrl());
+  const id = useState(getIdFromUrl());
 
-  const defaultTheme = createTheme(
-    {
-      palette:
-      {
-        mode,
-        primary: { main: "#4B2273" },
+  const defaultTheme = createTheme({
+    palette: {
+      mode,
+      primary: { main: "#4B2273" },
+    },
+    typography: {
+      fontFamily: [
+        'Jost',
+      ].join(','),
+    },
+  });
 
-      },
-      typography: {
-        fontFamily: [
-          'Jost',
-
-        ].join(','),
-
-
-      },
-
-    });
-  const [activeStep, setActiveStep] = React.useState(0);
-  const [value, setValue] = React.useState(null);
-  const [amount, setAmount] = React.useState(null);
-  const [costumerName, setCostumerName] = React.useState('');
-  
+  const [activeStep, setActiveStep] = useState(0);
+  const [value, setValue] = useState(null);
+  const [amount, setAmount] = useState(null);
+  const [costumerName, setCostumerName] = useState('');
+  const [costumerId, setCostumerId] = useState('');
 
   const toggleColorMode = () => {
     setMode((prev) => (prev === 'dark' ? 'light' : 'dark'));
@@ -100,22 +80,63 @@ export default function App() {
         };
         const formattedValue = `R$ ${convertToReais(response.amount)}`;
         setValue(formattedValue);
-        setCostumerName(response.name);
+        setCostumerName(response.costumer.first_name);
+        setCostumerId(response.costumer.customerZoopId);
       } catch (error) {
         console.error('Erro ao buscar os produtos:', error);
       }
-    }
+    };
     handleData();
-  },[id]);
+  }, [id]);
 
   const handleNext = async () => {
-    const pixTransaction = await createPixTransaction(amount);
-    setPix(pixTransaction);
+    if (paymentType === 'bankTransfer') {
+      const pixTransaction = await createPixTransaction(amount);
+      setPix(pixTransaction);
+    } else if (paymentType === 'creditCard') {
+        const creditTransaction = await createCreditTransaction(amount, cardNumber, cvv, cardName, expirationDate);
+        if (creditTransaction.creditTransaction.status === 'succeeded') {
+          setWaitingPayment(true);
+        } else  {
+          console.error('Erro ao processar a compra:');
+        }
+    } else if (paymentType === 'boletoTransfer') {
+      const boletoTransaction = await createBoletoTransaction(amount, costumerId);
+      if (boletoTransaction) {
+        window.open(boletoTransaction.boletoTransaction, '_blank');
+        setWaitingPayment(true);
+      } else  {
+        console.error('Erro ao processar a compra:');
+      }
+    }
   };
 
   const handleBack = () => {
     setActiveStep(activeStep - 1);
   };
+
+
+  function getStepContent(step) {
+    switch (step) {
+      case 0:
+        return <PaymentForm
+          paymentType={paymentType}
+          setPaymentType={setPaymentType}
+          cardNumber={cardNumber}
+          setCardNumber={setCardNumber}
+          cvv={cvv}
+          setCvv={setCvv}
+          expirationDate={expirationDate}
+          setExpirationDate={setExpirationDate}
+          cardName={cardName}
+          setCardName={setCardName}
+        />;
+      case 1:
+        return <FinishedBuy />;
+      default:
+        throw new Error('Unknown step');
+    }
+  }
 
   return (
     id ?
@@ -297,10 +318,11 @@ export default function App() {
                   </Step>
                 ))}
               </Stepper>
-              { pix ? (
+              {pix ? (
                 <QrCode codePix={pix} value={value} />
-              )
-                :
+                ) : waitingPayment ? (
+                  <WaitingPayment requestNumber={id[0]} />
+                ) :
                 (
                   <React.Fragment>
                     {getStepContent(activeStep)}

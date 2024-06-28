@@ -3,17 +3,23 @@ import Customer from "../../models/Customer";
 
 interface TransactionCustomerData {
     amount: number;
-    customerName: string;
+    customer: any;
 }
 
 const FindData = async (id: string): Promise<TransactionCustomerData> => {
     const transaction = await Transaction.findByPk(id);
-    
+
+    const customerZoopId: string = transaction.customerId;
+
     if (!transaction) {
         throw new Error(`Transaction with id ${id} not found`);
     }
 
-    const customer = await Customer.findByPk(transaction.customerId);
+    const customer = await Customer.findOne({
+        where: {
+          customerZoopId: customerZoopId
+        }
+      });
 
     if (!customer) {
         throw new Error(`Customer with id ${transaction.customerId} not found`);
@@ -21,7 +27,7 @@ const FindData = async (id: string): Promise<TransactionCustomerData> => {
 
     return {
         amount: transaction.amount,
-        customerName: customer.first_name
+        customer: customer
     };
 };
 

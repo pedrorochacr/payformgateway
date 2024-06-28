@@ -6,10 +6,10 @@ import FindData from "../services/TransactionService/FindData";
 
 export const store = async (req: Request, res: Response): Promise<Response> => {
   
-    const { marketplaceId, first_name, last_name, cpf, address_1, state, city, value  } = req.body;
+    const { marketplaceId, first_name,last_name, cpf, line1, line2, line3, state, city, postal_code, country_code, neighborhood, value } = req.body;
 
     const customerData = {
-        marketplaceId, first_name, last_name, cpf, address_1, state, city
+        marketplaceId, first_name,last_name, cpf, line1, line2, line3, state, city, postal_code, country_code, neighborhood
     }
     const transaction = await  CreateOrShowCustomerService(customerData, value);
 
@@ -22,7 +22,5 @@ export const findData = async (req: Request, res: Response): Promise<Response> =
 
     const data = await FindData(id);
 
-    return res.status(200).json({amount: data.amount, name: data.customerName});
+    return res.status(200).json({amount: data.amount, costumer: data.customer});
 };
-
-

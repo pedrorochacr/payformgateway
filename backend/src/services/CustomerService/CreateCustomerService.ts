@@ -4,14 +4,19 @@ import CreateBuyerService from "../ZoopService/CreateBuyerService";
 import CreateTransaction from '../TransactionService/CreateTransaction';
 
 interface CustomerData {
-    marketplaceId  : string
-    first_name : string;
-    customerZoopId?: string;
-    address_1: string;
-    state: string;
-    city: string;
-    last_name  : string
-    cpf : string
+  marketplaceId: string
+  first_name: string;
+  customerZoopId?: string;
+  state: string;
+  city: string;
+  last_name: string
+  cpf: string
+  line1: string; 
+  line2: string; 
+  line3: string; 
+  postal_code: string; 
+  country_code: string; 
+  neighborhood: string;
 }
 
 const CreatePayRequest = async (
@@ -25,11 +30,10 @@ const CreatePayRequest = async (
   if(!customer){
     const buyerZoopId = await CreateBuyerService(customerData);
     customerData.customerZoopId = buyerZoopId;
-    console.log(customerData);
     customer = await Customer.create(customerData)
   }
-
-  const transaction = await CreateTransaction(customer.id, value*100);
+  //console.log(customer);
+  const transaction = await CreateTransaction(customer.customerZoopId, value);
 
   return transaction;
 };

@@ -13,10 +13,10 @@ import {
   class Transaction extends Model<Transaction> {
     @PrimaryKey
     @Column
-    id: String;
+    id: string;
   
     @Column
-    customerId: number;
+    customerId: string;
   
     @Column
     amount: number;

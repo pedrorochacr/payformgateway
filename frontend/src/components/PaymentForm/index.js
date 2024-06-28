@@ -17,6 +17,7 @@ import { styled } from '@mui/material/styles';
 import PixIcon from '@mui/icons-material/Pix';
 import AccountBalanceRoundedIcon from '@mui/icons-material/AccountBalanceRounded';
 import CreditCardRoundedIcon from '@mui/icons-material/CreditCardRounded';
+import WarningRoundedIcon from '@mui/icons-material/WarningRounded';
 import SimCardRoundedIcon from '@mui/icons-material/SimCardRounded';
 import PixArea from '../PixArea';
 import BilletArea from '../BilletArea';
@@ -59,7 +60,7 @@ const Card = styled(MuiCard)(({ theme, selected }) => ({
 const PaymentContainer = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
-  gap:'35px',
+  gap: '35px',
   width: '100%',
   height: 340,
   padding: theme.spacing(3),
@@ -81,11 +82,15 @@ const FormGrid = styled('div')(() => ({
   flexDirection: 'column',
 }));
 
-export default function PaymentForm() {
-  const [paymentType, setPaymentType] = React.useState('creditCard');
-  const [cardNumber, setCardNumber] = React.useState('');
-  const [cvv, setCvv] = React.useState('');
-  const [expirationDate, setExpirationDate] = React.useState('');
+export default function PaymentForm({
+  paymentType, setPaymentType,
+  cardNumber, setCardNumber,
+  cvv, setCvv,
+  expirationDate, setExpirationDate,
+  cardName, setCardName
+}) {
+
+
   const handlePaymentTypeChange = (event) => {
     setPaymentType(event.target.value);
   };
@@ -124,11 +129,11 @@ export default function PaymentForm() {
           sx={{
             display: 'flex',
             flexDirection: { xs: 'column', sm: 'row' },
-            alignItems: {xs: 'center'},
+            alignItems: { xs: 'center' },
             gap: 2,
           }}
         >
-          <Card  selected={paymentType === 'creditCard'}>
+          <Card selected={paymentType === 'creditCard'}>
             <CardActionArea
               onClick={() => setPaymentType('creditCard')}
               sx={{
@@ -180,7 +185,7 @@ export default function PaymentForm() {
               </CardContent>
             </CardActionArea>
           </Card>
-          {/* <Card selected={paymentType === 'boletoTransfer'}>
+          <Card selected={paymentType === 'boletoTransfer'}>
             <CardActionArea
               onClick={() => setPaymentType('boletoTransfer')}
               sx={{
@@ -205,9 +210,23 @@ export default function PaymentForm() {
                 <Typography fontWeight="medium">Boleto</Typography>
               </CardContent>
             </CardActionArea>
-          </Card> */}
+          </Card>
         </RadioGroup>
       </FormControl>
+      {paymentType === 'boletoTransfer' && (
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2,
+            margin: '0 auto',
+          }}
+        >
+          <Alert severity="warning" icon={<WarningRoundedIcon />}>
+            Clique em finalizar compra para gerar o boleto
+          </Alert>
+        </Box>
+      )}
       {paymentType === 'creditCard' && (
         <Box
           sx={{
@@ -265,6 +284,8 @@ export default function PaymentForm() {
                   id="card-name"
                   autoComplete="card-name"
                   required
+                  value={cardName}
+                  onChange={(e) => setCardName(e.target.value)}
                 />
               </FormGrid>
               <FormGrid sx={{ flexGrow: 1 }}>
@@ -289,7 +310,7 @@ export default function PaymentForm() {
         </Box>
       )}
       {paymentType === 'bankTransfer' && (
-         <PixArea ></PixArea>
+        <PixArea ></PixArea>
       )}
       {/* {paymentType === 'boletoTransfer' && (
          <BilletArea />

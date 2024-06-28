@@ -9,7 +9,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       customerId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       amount: {
         type: Sequelize.FLOAT

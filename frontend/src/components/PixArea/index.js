@@ -1,10 +1,5 @@
-import { Alert, Box, Typography } from "@mui/material";
+import { Alert, Box } from "@mui/material";
 import WarningRoundedIcon from '@mui/icons-material/WarningRounded';
-import QrCode from "./QrCode";
-
-
-
-
 
 export default function PixArea() {
 
