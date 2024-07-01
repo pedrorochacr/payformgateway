@@ -8,7 +8,7 @@ const CreateTransaction = async (
   
   const newTransaction = await Transaction.create({ 
      customerId: customerId, 
-     amount: value,
+     amount: value*100,
      id: uuidv4()
   });
 
