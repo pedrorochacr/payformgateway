@@ -17,6 +17,7 @@ interface CustomerData {
   postal_code: string; 
   country_code: string; 
   neighborhood: string;
+  orderId: number;
 }
 
 const CreatePayRequest = async (
@@ -33,7 +34,7 @@ const CreatePayRequest = async (
     customer = await Customer.create(customerData)
   }
   //console.log(customer);
-  const transaction = await CreateTransaction(customer.customerZoopId, value);
+  const transaction = await CreateTransaction(customer.customerZoopId, customerData.orderId, value);
 
   return transaction;
 };

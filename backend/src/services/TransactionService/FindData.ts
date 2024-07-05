@@ -4,6 +4,7 @@ import Customer from "../../models/Customer";
 interface TransactionCustomerData {
     amount: number;
     customer: any;
+    orderId: number;
 }
 
 const FindData = async (id: string): Promise<TransactionCustomerData> => {
@@ -28,6 +29,7 @@ const FindData = async (id: string): Promise<TransactionCustomerData> => {
 
     return {
         amount: transaction.amount,
+        orderId: transaction.orderId,
         customer: customer
     };
 };

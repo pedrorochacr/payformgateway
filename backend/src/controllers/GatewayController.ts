@@ -8,14 +8,15 @@ import CreateBoletoTransaction from "../services/ZoopService/CreateBoletoTransac
 
 export const store = async (req: Request, res: Response): Promise<Response> => {
   
-    const { marketplaceId, first_name,last_name, cpf, line1, line2, line3, state, city, postal_code, country_code, neighborhood, value } = req.body;
+    const { marketplaceId, first_name,last_name, cpf, line1, line2, line3, state, city, postal_code, country_code, neighborhood, value, orderId } = req.body;
 
     const customerData = {
-        marketplaceId, first_name, last_name, cpf, line1, line2, line3, state, city, postal_code, country_code, neighborhood
+        marketplaceId, first_name, last_name, cpf, line1, line2, line3, state, city, postal_code, country_code, neighborhood, orderId
     }
     const transaction = await  CreatePayRequest(customerData, value);
 
-    return res.status(200).json({transaction, payLink: `${process.env.FRONTEND_URL}/?id=${transaction.id}`});
+    console.log(transaction)
+    return res.status(200).json({referenceId: transaction.orderId, payLink: `${process.env.FRONTEND_URL}/?id=${transaction.id}`});
 };
 
 export const storePixTransaction = async (req: Request, res: Response): Promise<Response> => {

@@ -20,6 +20,9 @@ import {
   
     @Column
     amount: number;
+
+    @Column
+    orderId: number;
   
     @CreatedAt
     @Column

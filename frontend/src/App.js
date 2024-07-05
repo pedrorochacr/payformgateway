@@ -24,6 +24,7 @@ import useApi from './services/api';
 import QrCode from './components/PixArea/QrCode';
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import axios from 'axios';
 
 const steps = ['Dados de Pagamento', 'Compra Finalizada'];
 
@@ -64,6 +65,7 @@ export default function App() {
   const [value, setValue] = useState(null);
   const [amount, setAmount] = useState(null);
   const [costumerName, setCostumerName] = useState('');
+  const [orderId, setOrderId] = useState('');
   const [costumerId, setCostumerId] = useState('');
 
   const toggleColorMode = () => {
@@ -80,6 +82,7 @@ export default function App() {
         };
         const formattedValue = `R$ ${convertToReais(response.amount)}`;
         setValue(formattedValue);
+        setOrderId(response.orderId);
         setCostumerName(response.costumer.first_name);
         setCostumerId(response.costumer.customerZoopId);
       } catch (error) {
@@ -90,22 +93,33 @@ export default function App() {
   }, [id]);
 
   const handleNext = async () => {
+    
     if (paymentType === 'bankTransfer') {
       const pixTransaction = await createPixTransaction(amount);
       setPix(pixTransaction?.pixTransaction?.qrCode);
     } else if (paymentType === 'creditCard') {
+      setWaitingPayment(true);
         const creditTransaction = await createCreditTransaction(amount, cardNumber, cvv, cardName, expirationDate);
-        if (creditTransaction.creditTransaction.status === 'succeeded') {
-          setWaitingPayment(true);
-          const transaction = await verifyTrasanction(creditTransaction.creditTransaction.data.id);
+        console.log(creditTransaction)
+        if (creditTransaction && creditTransaction.creditTransaction.status == "succeeded") {
+          setActiveStep(1);
+          const data = {
+              referenceId : orderId,
+              status: 'paid'
+          }
+          await axios.post(`${process.env.REACT_APP_WOO_WEBSITE}wc-api/wc_multipay_gateway/`, data)
+          window.location.href = process.env.REACT_APP_WOO_WEBSITE;
+
+          //const transaction = await verifyTrasanction(creditTransaction.creditTransaction.data.id);
         } else  {
+          
           console.error('Erro ao processar a compra:');
         }
+        setWaitingPayment(false);
     } else if (paymentType === 'boletoTransfer') {
       const boletoTransaction = await createBoletoTransaction(amount, costumerId);
       if (boletoTransaction) {
         window.open(boletoTransaction.boletoTransaction, '_blank');
-        setWaitingPayment(true);
       } else  {
         console.error('Erro ao processar a compra:');
       }
