@@ -38,7 +38,7 @@ export default function App() {
   const { createPixTransaction } = useApi();
   const { createCreditTransaction } = useApi();
   const { createBoletoTransaction } = useApi();
-  const [pix, setPix] = useState(null);
+  const [pix, setPix] = useState("");
   const location = useLocation();
   const [waitingPayment, setWaitingPayment] = useState(false);
   const getIdFromUrl = () => {
@@ -92,11 +92,12 @@ export default function App() {
   const handleNext = async () => {
     if (paymentType === 'bankTransfer') {
       const pixTransaction = await createPixTransaction(amount);
-      setPix(pixTransaction);
+      setPix(pixTransaction?.pixTransaction?.qrCode);
     } else if (paymentType === 'creditCard') {
         const creditTransaction = await createCreditTransaction(amount, cardNumber, cvv, cardName, expirationDate);
         if (creditTransaction.creditTransaction.status === 'succeeded') {
           setWaitingPayment(true);
+          const transaction = await verifyTrasanction(creditTransaction.creditTransaction.data.id);
         } else  {
           console.error('Erro ao processar a compra:');
         }
@@ -110,7 +111,6 @@ export default function App() {
       }
     }
   };
-
   const handleBack = () => {
     setActiveStep(activeStep - 1);
   };

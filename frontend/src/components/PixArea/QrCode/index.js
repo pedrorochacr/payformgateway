@@ -3,7 +3,7 @@ import { Box, Typography, Button, Divider, Grid, Tooltip  } from '@mui/material'
 import QRCode from 'qrcode-generator';
 
 export default function QrCode({codePix, value}) {
-    const pixCode = codePix?.pixTransaction;
+    const pixCode = codePix;
     const qrValue = generatePixQRCode(pixCode);
 
     const handleCopyCode = () => {

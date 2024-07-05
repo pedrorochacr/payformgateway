@@ -18,9 +18,11 @@ const CreateBoletoTransaction = async (
         ' Authorization': 'Basic ' + Buffer.from(`${process.env.ZOOP_API_USERNAME}:`).toString('base64')
     }
     try {
-        const boletoTransaction = await axios.post(`${process.env.ZOOP_API_URL}/${process.env.MARKETPLACE_ID}/transactions`, reqData, { headers })
-        
-        return boletoTransaction.data.payment_method.url;
+        const boletoTransaction = await axios.post(`${process.env.ZOOP_API_URL}/${process.env.MARKETPLACE_ID}/transactions`, reqData, { headers });
+        return {
+            link: "boletoTransaction.data.payment_method.url", 
+            id: "boletoTransaction.data.id" 
+        };
 
     } catch (e) {
         console.error(e.response)

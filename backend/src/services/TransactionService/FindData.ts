@@ -9,6 +9,7 @@ interface TransactionCustomerData {
 const FindData = async (id: string): Promise<TransactionCustomerData> => {
     const transaction = await Transaction.findByPk(id);
 
+
     const customerZoopId: string = transaction.customerId;
 
     if (!transaction) {
