@@ -99,15 +99,11 @@ export default function App() {
       setPix(pixTransaction?.pixTransaction?.qrCode);
     } else if (paymentType === 'creditCard') {
       setWaitingPayment(true);
-        const creditTransaction = await createCreditTransaction(amount, cardNumber, cvv, cardName, expirationDate);
+        const creditTransaction = await createCreditTransaction(amount, cardNumber, cvv, cardName, expirationDate, orderId);
         console.log(creditTransaction)
         if (creditTransaction && creditTransaction.creditTransaction.status == "succeeded") {
           setActiveStep(1);
-          const data = {
-              referenceId : orderId,
-              status: 'paid'
-          }
-          await axios.post(`${process.env.REACT_APP_WOO_WEBSITE}wc-api/wc_multipay_gateway/`, data)
+      
           window.location.href = process.env.REACT_APP_WOO_WEBSITE;
 
           //const transaction = await verifyTrasanction(creditTransaction.creditTransaction.data.id);
