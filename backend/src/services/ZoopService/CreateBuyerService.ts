@@ -39,7 +39,6 @@ const CreateBuyerService = async (
     taxpayer_id,
     address
   }
-  //console.log(reqData);
   const headers = {
     ' Authorization': 'Basic ' + Buffer.from(`${process.env.ZOOP_API_USERNAME}:`).toString('base64')
   }

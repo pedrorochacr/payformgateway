@@ -18,8 +18,8 @@ const CreatePixTransaction = async (
    try{
     const pixTransaction = await axios.post(`${process.env.ZOOP_API_URL}/${process.env.MARKETPLACE_ID}/transactions`, reqData, {headers});
     return {
-      qrCode: "pixTransaction.data.payment_method.qr_code.emv",
-      id: "pixTransaction.data.id"
+      qrCode: pixTransaction.data.payment_method.qr_code.emv,
+      id: pixTransaction.data.id
     };
 
    } catch(e){

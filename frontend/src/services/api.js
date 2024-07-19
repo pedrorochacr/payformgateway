@@ -16,8 +16,8 @@ const useApi = () => ({
         return response.data;
     },
 
-    createCreditTransaction: async (value, numberCard, CVV, name, expirationDate, orderId) => {
-        const response = await api.post('/createCreditTransaction', {value, numberCard, CVV, name, expirationDate, orderId});
+    createCreditTransaction: async (value, numberCard, CVV, name, expirationDate, orderId, installmentNumber, rememberCard, costumerId, cardId) => {
+        const response = await api.post('/createCreditTransaction', {value, numberCard, CVV, name, expirationDate, orderId, installmentNumber, rememberCard, costumerId, cardId});
         return response.data;
     },
 

@@ -1,7 +1,14 @@
 {
   "dependencies": {
     "@api/zoop": "file:.api/apis/zoop",
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@hookform/resolvers": "^3.9.0",
+    "@mui/material": "^5.16.0",
     "axios": "^1.7.2",
-    "number-formatter": "^1.2.0"
+    "number-formatter": "^1.2.0",
+    "react-hook-form": "^7.52.1",
+    "react-loading": "^2.0.3",
+    "yup": "^1.4.0"
   }
 }

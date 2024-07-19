@@ -20,8 +20,8 @@ const CreateBoletoTransaction = async (
     try {
         const boletoTransaction = await axios.post(`${process.env.ZOOP_API_URL}/${process.env.MARKETPLACE_ID}/transactions`, reqData, { headers });
         return {
-            link: "boletoTransaction.data.payment_method.url", 
-            id: "boletoTransaction.data.id" 
+            link: boletoTransaction.data.payment_method.url, 
+            id: boletoTransaction.data.id
         };
 
     } catch (e) {

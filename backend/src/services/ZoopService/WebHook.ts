@@ -3,9 +3,21 @@ import { logger } from "../../utils/logger";
 
 class WebHookService {
   public async handleWebhook(req: Request, res: Response): Promise<Response> {
-    console.log(req.body);
     const { event } = req.body;
 
+    //console.log(req.body);
+
+       // try{
+    //     await axios.post(`${process.env.WOO_WEBSITE}/wc-api/wc_multipay_gateway/`, data, {
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //         }
+    //     })
+
+    // } catch(error){
+    //     console.error(error)
+    // }
+   
     try {
       // Verifique se é um ping
       if (event.type === "ping") {

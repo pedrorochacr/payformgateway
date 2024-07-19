@@ -33,7 +33,7 @@ const CreatePayRequest = async (
     customerData.customerZoopId = buyerZoopId;
     customer = await Customer.create(customerData)
   }
-  //console.log(customer);
+  
   const transaction = await CreateTransaction(customer.customerZoopId, customerData.orderId, value);
 
   return transaction;

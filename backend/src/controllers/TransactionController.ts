@@ -22,5 +22,5 @@ export const findData = async (req: Request, res: Response): Promise<Response> =
 
     const data = await FindData(id);
 
-    return res.status(200).json({amount: data.amount, costumer: data.customer, orderId: data.orderId});
+    return res.status(200).json({amount: data.amount, costumer: data.customer, orderId: data.orderId, card: data.card});
 };

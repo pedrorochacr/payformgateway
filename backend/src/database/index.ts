@@ -1,6 +1,7 @@
 import { Sequelize } from "sequelize-typescript";
 import Customer from "../models/Customer";
 import Transaction from "../models/Transaction";
+import Card from "../models/Card";
 
 
 // eslint-disable-next-line
@@ -11,7 +12,8 @@ const sequelize = new Sequelize(dbConfig);
 
 const models = [
   Customer,
-  Transaction
+  Transaction,
+  Card
 ];
 
 sequelize.addModels(models);
