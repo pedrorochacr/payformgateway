@@ -6,8 +6,8 @@ const api = axios.create({
 
 
 const useApi = () => ({
-    createPixTransaction: async (value) => {
-        const response = await api.post('/createPixTransaction', {value});
+    createPixTransaction: async (data) => {
+        const response = await api.post('/createPixTransaction',data);
         return response.data;
     },
 
@@ -16,13 +16,13 @@ const useApi = () => ({
         return response.data;
     },
 
-    createCreditTransaction: async (value, numberCard, CVV, name, expirationDate, orderId, installmentNumber, rememberCard, costumerId, cardId) => {
-        const response = await api.post('/createCreditTransaction', {value, numberCard, CVV, name, expirationDate, orderId, installmentNumber, rememberCard, costumerId, cardId});
+    createCreditTransaction: async (value, numberCard, CVV, name, expirationDate, orderId, installmentNumber, rememberCard, costumerId, cardId, transactionId) => {
+        const response = await api.post('/createCreditTransaction', {value, numberCard, CVV, name, expirationDate, orderId, installmentNumber, rememberCard, costumerId, cardId,transactionId});
         return response.data;
     },
 
-    createBoletoTransaction: async (value, costumerId) => {
-        const response = await api.post('/createBoletoTransaction', {value, costumerId});
+    createBoletoTransaction: async (value, costumerId,transactionId) => {
+        const response = await api.post('/createBoletoTransaction', {value, costumerId,transactionId});
         return response.data;
     }
 });

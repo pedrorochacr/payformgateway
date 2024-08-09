@@ -5,6 +5,7 @@ import CreateCreditTransaction from "../services/ZoopService/CreateCreditTransac
 import CreateBoletoTransaction from "../services/ZoopService/CreateBoletoTransaction";
 
 import axios from "axios";
+import UpdateTransactionZoopIdService from "../services/TransactionService/UpdateTransactionZoopIdService";
 // import { getIO } from "../libs/socket";
 
 
@@ -23,27 +24,28 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
 
 export const storePixTransaction = async (req: Request, res: Response): Promise<Response> => {
   
-    const {value} = req.body;
+    const {value, transactionId} = req.body;
 
+    console.log("transactionId Recebido", transactionId)
     const pixTransaction = await CreatePixTransation(value);
-
+    console.log("id zoop criado", pixTransaction)
+    await UpdateTransactionZoopIdService(transactionId, pixTransaction.id )
     return res.status(200).json({pixTransaction});
 };
 
 export const storeCreditTransaction = async (req: Request, res: Response): Promise<Response> => {
 
-    const { numberCard, CVV, name, expirationDate, value, orderId, installmentNumber, rememberCard, costumerId, cardId} = req.body;
+    const { numberCard, CVV, name, expirationDate, value, orderId, installmentNumber, rememberCard, costumerId, cardId, transactionId} = req.body;
 
     const creditCard = {
         numberCard, CVV, name, expirationDate
     }
 
+    console.log("transactionId Recebido", transactionId)
     const creditTransaction = await CreateCreditTransaction(value, creditCard, installmentNumber, rememberCard, costumerId, cardId);
-    const data = {
-        referenceId : orderId,
-        status: 'paid'
-    }
+    console.log("id zoop criado", creditTransaction.id)
 
+    await UpdateTransactionZoopIdService(transactionId, creditTransaction.id )
     // try{
     //     await axios.post(`${process.env.WOO_WEBSITE}/wc-api/wc_multipay_gateway/`, data, {
     //         headers: {
@@ -60,12 +62,14 @@ export const storeCreditTransaction = async (req: Request, res: Response): Promi
 
 export const storeBoletoTransaction = async (req: Request, res: Response): Promise<Response> => {
   
-    const {value, costumerId} = req.body;
+    const {value, costumerId, transactionId} = req.body;
 
+    console.log("transactionId Recebido", transactionId)
 
     const boletoTransaction = await CreateBoletoTransaction(value, costumerId);
 
+    console.log("id zoop criado", boletoTransaction.id)
 
-
+    await UpdateTransactionZoopIdService(transactionId, boletoTransaction.id )
     return res.status(200).json({boletoTransaction});
 };

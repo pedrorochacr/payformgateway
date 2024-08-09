@@ -16,7 +16,7 @@ const CreateCreditTransaction = async (
     rememberCard: boolean,
     costumerId: string,
     cardId: string 
-): Promise<string> => {
+): Promise<any> => {
     if (rememberCard) {
         const response = await CreateCardToken(creditCard, costumerId);
     }

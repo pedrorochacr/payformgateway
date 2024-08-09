@@ -23,6 +23,10 @@ import {
 
     @Column
     orderId: number;
+
+    @Column
+    transactionZoopId: string;
+
   
     @CreatedAt
     @Column

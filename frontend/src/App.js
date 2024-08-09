@@ -107,13 +107,18 @@ export default function App() {
   }, [id, dataLoaded]);
 
   const handleNext = async () => {
+    const transactionId = id[0];
+    const data ={
+        value:amount,
+        transactionId
+    }
 
     if (paymentType === 'bankTransfer') {
-      const pixTransaction = await createPixTransaction(amount);
+      const pixTransaction = await createPixTransaction(data);
       setPix(pixTransaction?.pixTransaction?.qrCode);
     } else if (paymentType === 'creditCard') {
       setWaitingPayment(true);
-      const creditTransaction = await createCreditTransaction(amount, cardNumber, cvv, cardName, expirationDate, orderId, installmentNumber, rememberCard, costumerId, transactionCardId);
+      const creditTransaction = await createCreditTransaction(amount, cardNumber, cvv, cardName, expirationDate, orderId, installmentNumber, rememberCard, costumerId, transactionCardId,transactionId);
       if (creditTransaction?.creditTransaction?.status == "succeeded") {
         setActiveStep(1);
         window.location.href = process.env.REACT_APP_WOO_WEBSITE;
@@ -122,7 +127,7 @@ export default function App() {
       }
       setWaitingPayment(false);
     } else if (paymentType === 'boletoTransfer') {
-      const boletoTransaction = await createBoletoTransaction(amount, costumerId);
+      const boletoTransaction = await createBoletoTransaction(amount, costumerId,transactionId);
       if (boletoTransaction) {
         setWaitingPayment(true);
         window.open(boletoTransaction.boletoTransaction.link, '_blank');
