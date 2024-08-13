@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Typography, Button, Divider, Grid, Tooltip  } from '@mui/material';
 import QRCode from 'qrcode-generator';
+import CountdownTimer from '../../CountDownTimer';
 
 export default function QrCode({codePix, value}) {
     const pixCode = codePix;
@@ -38,10 +39,11 @@ export default function QrCode({codePix, value}) {
                         </Box>
                     </Box>
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} container gap={3}>
                     <Typography variant="h5" gutterBottom sx={{ fontWeight: '450' }}>
                         Escaneie este código QR para pagar
                     </Typography>
+                    <CountdownTimer initialMinutes={4} />
                 </Grid>
                 <Grid item xs={12} sx={{ mt: -4 }}>
                     <ul style={{ listStyleType: 'numeric', paddingLeft: 16 }}>

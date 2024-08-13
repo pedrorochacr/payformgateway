@@ -18,6 +18,7 @@ import PixIcon from '@mui/icons-material/Pix';
 import AccountBalanceRoundedIcon from '@mui/icons-material/AccountBalanceRounded';
 import CreditCardRoundedIcon from '@mui/icons-material/CreditCardRounded';
 import WarningRoundedIcon from '@mui/icons-material/WarningRounded';
+import InputMask from 'react-input-mask';
 import PixArea from '../PixArea';
 import BilletArea from '../BilletArea';
 import { Autocomplete, TextField } from '@mui/material';
@@ -166,7 +167,8 @@ export default function PaymentForm({
   };
 
   const handleCardNumberChangeFlag = (event) => {
-    const number = event.target.value;
+    const number = event.target.value.replace(/\s+/g, '').trim();
+    console.log(number)
     setCardNumber(number);
 
     if (number.length >= 6) {
@@ -495,22 +497,30 @@ export default function PaymentForm({
                     <FormLabel htmlFor="card-number" required sx={{ color: '#2E2E2E', fontFamily: 'CeraPro' }}>
                       Número do Cartão
                     </FormLabel>
-                    <OutlinedInput
-                      id="card-number"
-                      autoComplete="card-number"
-                      placeholder="0000 0000 0000 0000"
-                      required
-                      value={cardNumber}
-                      onChange={handleCardNumberChangeFlag}
-                      sx={{ backgroundColor: '#f5f5f5' }}
-                      endAdornment={
-                        cardBrand && cardBrand !== 'unknown' && (
-                          <InputAdornment position="end">
-                            <img src={logos[cardBrand]} alt={`${cardBrand} logo`} style={{ width: '3rem' }} />
-                          </InputAdornment>
-                        )
-                      }
-                    />
+                    <InputMask
+            mask="9999 9999 9999 9999"
+            value={cardNumber}
+            onChange={handleCardNumberChangeFlag}
+        >
+            {(inputProps) => (
+                     <OutlinedInput
+                     id="card-number"
+                     autoComplete="card-number"
+                     placeholder="0000 0000 0000 0000"
+                     required
+
+                     sx={{ backgroundColor: '#f5f5f5' }}
+                     endAdornment={
+                       cardBrand && cardBrand !== 'unknown' && (
+                         <InputAdornment position="end">
+                           <img src={logos[cardBrand]} alt={`${cardBrand} logo`} style={{ width: '3rem' }} />
+                         </InputAdornment>
+                       )
+                     }
+                   />
+            )}
+        </InputMask>
+
                   </FormGrid>
                 </Box>
                 <Box sx={{ display: 'flex', gap: 2 }}>

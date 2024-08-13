@@ -117,11 +117,13 @@ export default function App() {
       const pixTransaction = await createPixTransaction(data);
       setPix(pixTransaction?.pixTransaction?.qrCode);
     } else if (paymentType === 'creditCard') {
-      setWaitingPayment(true);
+      // setWaitingPayment(true);
+      // console.log(cardNumber)
       const creditTransaction = await createCreditTransaction(amount, cardNumber, cvv, cardName, expirationDate, orderId, installmentNumber, rememberCard, costumerId, transactionCardId,transactionId);
+      window.location.href = "https://e-birds.com.br/";
       if (creditTransaction?.creditTransaction?.status == "succeeded") {
-        setActiveStep(1);
-        window.location.href = process.env.REACT_APP_WOO_WEBSITE;
+        // setActiveStep(1);
+        
       } else {
         console.error('Erro ao processar a compra:');
       }
