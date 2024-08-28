@@ -108,7 +108,7 @@ export default function App() {
 
 
   useEffect(() => {
-    const ws = new WebSocket('ws://localhost:4000');
+    const ws = new WebSocket('wss://gatewayapi.payform.com.br');
 
     ws.onmessage = function(event) {
       const message = JSON.parse(event.data);
