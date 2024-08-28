@@ -6,6 +6,7 @@ import CreateBoletoTransaction from "../services/ZoopService/CreateBoletoTransac
 
 import axios from "axios";
 import UpdateTransactionZoopIdService from "../services/TransactionService/UpdateTransactionZoopIdService";
+import { broadcast } from "../websocketServer";
 // import { getIO } from "../libs/socket";
 
 
@@ -29,7 +30,9 @@ export const storePixTransaction = async (req: Request, res: Response): Promise<
     console.log("transactionId Recebido", transactionId)
     const pixTransaction = await CreatePixTransation(value);
     console.log("id zoop criado", pixTransaction)
-    await UpdateTransactionZoopIdService(transactionId, pixTransaction.id )
+    await UpdateTransactionZoopIdService(transactionId, pixTransaction.id );
+    
+
     return res.status(200).json({pixTransaction});
 };
 

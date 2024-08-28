@@ -106,6 +106,29 @@ export default function App() {
     }
   }, [id, dataLoaded]);
 
+
+  useEffect(() => {
+    const ws = new WebSocket('ws://localhost:4000');
+
+    ws.onmessage = function(event) {
+      const message = JSON.parse(event.data);
+      if (message.type === 'transactionUpdate') {
+        const {transactionId} = message.data;
+        if(transactionId == id[0]){
+            setActiveStep(1);
+        }
+        // Atualize a tela de acordo com os dados recebidos
+        console.log('Atualização da transação recebida:', message.data);
+        // Implementar lógica para atualizar a tela
+      }
+    };
+
+    // Limpar conexão WebSocket ao desmontar o componente
+    return () => {
+      ws.close();
+    };
+  }, []);
+
   const handleNext = async () => {
     const transactionId = id[0];
     const data ={
@@ -131,7 +154,6 @@ export default function App() {
     } else if (paymentType === 'boletoTransfer') {
       const boletoTransaction = await createBoletoTransaction(amount, costumerId,transactionId);
       if (boletoTransaction) {
-        setWaitingPayment(true);
         window.open(boletoTransaction.boletoTransaction.link, '_blank');
       } else {
         console.error('Erro ao processar a compra:');

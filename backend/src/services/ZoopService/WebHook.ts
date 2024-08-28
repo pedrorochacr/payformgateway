@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { logger } from "../../utils/logger";
 import Transaction from "../../models/Transaction";
 import axios from "axios";
+import { broadcast } from "../../websocketServer";
 
 class WebHookService {
   public async handleWebhook(req: Request, res: Response): Promise<Response> {
@@ -32,6 +33,8 @@ class WebHookService {
         } catch (error) {
           console.error(error)
         }
+
+        broadcast({ type: 'transactionUpdate', data: {transactionId:transaction.id} });
       }
     }
 
